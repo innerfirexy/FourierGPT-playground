@@ -24,12 +24,22 @@ def json_to_txt(json_path, orig_txt_path, samp_txt_path):
 #             './davinci/writing_davinci.original.txt',
 #             './davinci/writing_davinci.sampled.txt')
 
-json_to_txt('./gpt-4/pubmed_gpt-4.raw_data.json',
-            './gpt-4/pubmed_gpt-4.original.txt',
-            './gpt-4/pubmed_gpt-4.sampled.txt')
-json_to_txt('./gpt-3.5/pubmed_gpt-3.5-turbo.raw_data.json',
-            './gpt-3.5/pubmed_gpt-3.5-turbo.original.txt',
-            './gpt-3.5/pubmed_gpt-3.5-turbo.sampled.txt')
-json_to_txt('./davinci/pubmed_davinci.raw_data.json',
-            './davinci/pubmed_davinci.original.txt',
-            './davinci/pubmed_davinci.sampled.txt')
+# json_to_txt('./gpt-4/pubmed_gpt-4.raw_data.json',
+#             './gpt-4/pubmed_gpt-4.original.txt',
+#             './gpt-4/pubmed_gpt-4.sampled.txt')
+# json_to_txt('./gpt-3.5/pubmed_gpt-3.5-turbo.raw_data.json',
+#             './gpt-3.5/pubmed_gpt-3.5-turbo.original.txt',
+#             './gpt-3.5/pubmed_gpt-3.5-turbo.sampled.txt')
+# json_to_txt('./davinci/pubmed_davinci.raw_data.json',
+#             './davinci/pubmed_davinci.original.txt',
+#             './davinci/pubmed_davinci.sampled.txt')
+
+# json_to_txt('./gpt-4/xsum_gpt-4.raw_data.json',
+#             './gpt-4/xsum_gpt-4.original.txt',
+#             './gpt-4/xsum_gpt-4.sampled.txt')
+# json_to_txt('./gpt-3.5/xsum_gpt-3.5-turbo.raw_data.json',
+#             './gpt-3.5/xsum_gpt-3.5-turbo.original.txt',
+#             './gpt-3.5/xsum_gpt-3.5-turbo.sampled.txt')
+# json_to_txt('./davinci/xsum_davinci.raw_data.json',
+#             './davinci/xsum_davinci.original.txt',
+#             './davinci/xsum_davinci.sampled.txt')
