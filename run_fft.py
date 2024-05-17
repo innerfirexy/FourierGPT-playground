@@ -84,6 +84,18 @@ class FFTProcessor(object):
         elif self.preprocess != 'none':
             raise ValueError(f'Unknown preprocess method: {self.preprocess}. Please choose from [none, zscore, minmax, log, logzs].')
         return data
+    
+    def _create_input_df(self, data: list, require_sid=True):
+        if require_sid:
+            df = pd.DataFrame({
+                'value': np.concatenate(data),
+                'sid': np.concatenate([np.repeat(i, len(d)) for i, d in enumerate(data)])
+            })
+        else:
+            df = pd.DataFrame({
+                'value': np.concatenate(data)
+            })
+        return df
 
     def _periodogram_batch(self, data: list[np.ndarray], require_sid=False):
         """
@@ -138,7 +150,7 @@ class FFTProcessor(object):
             sp_x = np.abs(fft_res) # equivalent to np.sqrt(fft_res.real**2 + fft_res.imag**2)
         return freq_x[len(freq_x)//2:], sp_x[len(sp_x)//2:]
     
-    def _create_df(self, freqs, powers, sids=None):
+    def _create_fft_df(self, freqs, powers, sids=None):
         if sids is not None:
             df = pd.DataFrame.from_dict({
                 'sid': np.concatenate(sids),
@@ -172,7 +184,7 @@ class FFTProcessor(object):
             freqs, powers, sids = self._fft_batch(data, require_sid=self.require_sid, verbose=self.verbose)
 
         # Collect result 
-        df = self._create_df(freqs, powers, sids)
+        df = self._create_fft_df(freqs, powers, sids)
 
         return df
 
