@@ -43,7 +43,7 @@ class Model(object):
         logits = self.model(inputs)['logits'][0].cpu().to(torch.float32)
         probs = F.softmax(logits, dim=-1) # shape: [L, V]
         nlls = torch.zeros(probs.shape[0]-1, dtype=torch.float32) # NLLs for position i from 0 to L-1
-        for i in range(nlls): # probs[i] is the probability distribution of the (i+1)th token, i.e., P(token[i+1] | history)
+        for i in range(len(nlls)): # probs[i] is the probability distribution of the (i+1)th token, i.e., P(token[i+1] | history)
             nlls[i] = -torch.log(probs[i, token_ids[0, i+1]]) # NLL[i] = -log P(token[i+1] | history)
         if return_tokens:
             return logits, nlls, token_ids
