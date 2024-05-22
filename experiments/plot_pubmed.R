@@ -2,15 +2,6 @@ require("ggplot2")
 require("data.table")
 
 
-# Add sequence ID
-add_sid <- function(dt) {
-  dt[, freq2 := shift(freq, 1, type="lead", fill=0.5)]
-  dt$diffSeries <- dt$freq > dt$freq2
-  dt$sid <- cumsum(dt$diffSeries)
-  dt$sid <- shift(dt$sid, 1, type="lag", fill=0)
-  dt[, .(freq, power, sid)]
-}
-
 read_nll <- function(file_path, norm=FALSE) {
     nll_list <- c()
     len_list <- c()
@@ -32,6 +23,8 @@ read_nll <- function(file_path, norm=FALSE) {
     close(conn)
     data.table(value = as.numeric(nll_list), sid = as.integer(len_list))
 }
+
+
 
 
 ###
@@ -252,58 +245,6 @@ p <- ggplot(nlllogzs.fftimag.gpt2xl, aes(freq, power, color=type)) +
     ggtitle("PubMed: Human vs. GPT-4 \nNLL logzs, FFT imag, est GPT2XL)") +
     labs(x = bquote(omega[k]), y = bquote(X(omega[k])))
 ggsave("gpt4_human_pubmed_Ans_gpt2xl_nlllogzs_fftimag.pdf", plot=p, width=5, height=5)
-
-
-
-## Bin plot
-# FFT norm, estimated with gpt2xl
-d.gpt4$bin <- cut(d.gpt4$freq, breaks=seq(0, maxFreq, 0.05), include.lowest=TRUE)
-p <- ggplot(d.gpt4, aes(bin, power, fill=type)) +
-    geom_boxplot() +
-    theme_bw() + theme(plot.title = element_text(hjust = 0.5, vjust=-8, size = 12)) +
-    ggtitle("PubMed: Human vs. GPT-4") +
-    labs(x = bquote(omega[k]), y = bquote(X(omega[k])))
-ggsave("gpt4_human_pubmed_Ans_gpt2xl_bin_fftnorm.pdf", plot=p, width=8, height=5)
-
-# FFT raw, estimated with gpt2xl
-fft.gpt4$bin <- cut(fft.gpt4$freq, breaks=seq(0, maxFreq, 0.05), include.lowest=TRUE)
-p <- ggplot(fft.gpt4[bin!="[0,0.05]"], aes(bin, power, fill=type)) +
-    geom_boxplot() +
-    theme_bw() + theme(plot.title = element_text(hjust = 0.5, vjust=-8, size = 12)) +
-    ggtitle("PubMed: Human vs. GPT-4") +
-    labs(x = bquote(omega[k]), y = bquote(X(omega[k])))
-ggsave("gpt4_human_pubmed_Ans_gpt2xl_bin_fft.pdf", plot=p, width=8, height=5)
-
-# FFT norm, estimated with gpt2
-fftnorm.gpt4.gpt2$bin <- cut(fftnorm.gpt4.gpt2$freq, breaks=seq(0, maxFreq, 0.05), include.lowest=TRUE)
-p <- ggplot(fftnorm.gpt4.gpt2, aes(bin, power, fill=type)) +
-    geom_boxplot() +
-    theme_bw() + theme(plot.title = element_text(hjust = 0.5, vjust=-8, size = 12)) +
-    ggtitle("PubMed: Human vs. GPT-4 (FFT norm, est GPT2)") +
-    labs(x = bquote(omega[k]), y = bquote(X(omega[k])))
-ggsave("gpt4_human_pubmed_Ans_gpt2_bin_fftnorm.pdf", plot=p, width=8, height=5)
-
-# FFT raw, estimated with gpt2
-nllzs.fftnorm.gpt2$bin <- cut(nllzs.fftnorm.gpt2$freq, breaks=seq(0, maxFreq, 0.05), include.lowest=TRUE)
-p <- ggplot(nllzs.fftnorm.gpt2[bin!="[0,0.05]"], aes(bin, power, fill=type)) +
-    geom_boxplot() +
-    theme_bw() + theme(plot.title = element_text(hjust = 0.5, vjust=-8, size = 12)) +
-    ggtitle("PubMed: Human vs. GPT-4 (FFT raw, est GPT2)") +
-    labs(x = bquote(omega[k]), y = bquote(X(omega[k])))
-ggsave("gpt4_human_pubmed_Ans_gpt2_bin_fft.pdf", plot=p, width=8, height=5)
-
-
-# T-test for each bin
-table(d.gpt4$bin)
-#   [0,0.05] (0.05,0.1] (0.1,0.15] (0.15,0.2] (0.2,0.25] (0.25,0.3] (0.3,0.35] 
-#        826        680        681        677        696        640        658 
-# (0.35,0.4] (0.4,0.45] (0.45,0.5] 
-#        699        663        582
-
-# Get summary of `power` for each bin
-d.gpt4[, .(mean=mean(power), sd=sd(power)), by=.(bin, type)]
-#            bin  type        mean       sd
-
 
 
 ## Use density plot to check the distribution of `power`
