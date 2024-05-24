@@ -23,13 +23,14 @@ def create_parser():
             (negative log-likelihood output) in replace of the default models'
     )
     parser.add_argument('--model_path', type=str, default='', help='load model locally if specified')
-
     parser.add_argument(
         "--config",
         type=str,
         default=None,
         help="path to the configuration file"
     )
+    parser.add_argument('--delimiter', type=str, default=' ')
+    parser.add_argument('--output_type', type=str, default='int', choices=['str', 'int'])
     return parser
 
 
@@ -52,9 +53,23 @@ def load_tokenizer(args):
 
 def main(args):
     tokenizer = load_tokenizer(args)
-    pass
+    with open(args.input, 'r') as fr:
+        data = [line.strip() for line in fr.readlines()]
+    tokenized_results = []
+    for line in tqdm(data):
+        # print(line)
+        token_ids = tokenizer.encode(line)
+        # print(token_ids)
+        # tokens = [tokenizer.decode([token_id]) for token_id in token_ids]
+        # tokens = tokenizer.convert_ids_to_tokens(token_ids) # This results in prefix 'Ġ' as deliminater
+        # print(tokens)
+        tokenized_results.append(token_ids)
+    with open(args.output, 'w') as fw:
+        for token_ids in tokenized_results:
+            fw.write(args.delimiter.join([str(token_id) for token_id in token_ids]) + '\n')
 
 
 if __name__ == "__main__":
     parser = create_parser()
     args = parser.parse_args()
+    main(args)
