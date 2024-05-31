@@ -289,3 +289,20 @@ p <- ggplot(d.gpt4, aes(logpower, fill=type)) +
     ggtitle("PubMed: Human vs. GPT-4 (by freq bin)") +
     labs(x = bquote(log(X(omega[k]) + 25)), y = "Density")
 ggsave("gpt4_human_pubmed_Ans_gpt2xl_fftnorm_logdensity_bybin.pdf", width = 10, height = 10)
+
+
+##
+# bigram
+##
+d.bigram.orig <- fread("../data/gpt-4/pubmed_gpt-4.original.bigram.nllzs.fftnorm.txt")
+d.bigram.samp <- fread("../data/gpt-4/pubmed_gpt-4.sampled.bigram.nllzs.fftnorm.txt")
+d.bigram.orig$Source <- "Human"
+d.bigram.samp$Source <- "GPT-4"
+d.bigram <- rbind(d.bigram.orig, d.bigram.samp)
+
+p <- ggplot(d.bigram, aes(freq, power, color=Source)) +
+    geom_smooth() +
+    theme_bw() + theme(plot.title = element_text(hjust = 0.5, vjust=-8, size = 12)) +
+    ggtitle("PubMed: Human vs. GPT-4\nEst. bigram") +
+    labs(x = bquote(omega[k]), y = bquote(X(omega[k])))
+ggsave("gpt4_human_pubmed_bigram_nllzs_fftnorm.pdf", plot=p, width=5, height=5)
