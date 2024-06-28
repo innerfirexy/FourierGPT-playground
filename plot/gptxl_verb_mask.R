@@ -48,7 +48,7 @@ p <- ggplot(d.gpt4, aes(freq, power, color=type)) +
           legend.position.inside = c(0.75, 0.2)
           )
     
-ggsave("plot/pdf/gpt2_verb_mask/gpt4_pubmed_gpt2_verb_mask.pdf", plot=p, width=5, height=5)
+ggsave("plot/pdf/gpt2_verb_mask/gpt4_pubmed_gpt2_verb_mask.pdf", plot=p, width=3, height=3)
 
 
 
@@ -87,7 +87,7 @@ p <- ggplot(d.gpt4, aes(freq, power, color=type)) +
           legend.position.inside = c(0.75, 0.2)
           )
     
-ggsave("plot/pdf/gpt2_verb_mask/gpt4_writing_gpt2_verb_mask.pdf", plot=p, width=5, height=5)
+ggsave("plot/pdf/gpt2_verb_mask/gpt4_writing_gpt2_verb_mask.pdf", plot=p, width=3, height=3)
 
 
 # GPT4:  Xsum
@@ -125,7 +125,7 @@ p <- ggplot(d.gpt4, aes(freq, power, color=type)) +
           legend.position.inside = c(0.75, 0.2)
           )
     
-ggsave("plot/pdf/gpt2_verb_mask/gpt4_xsum_gpt2_verb_mask.pdf", plot=p, width=5, height=5)
+ggsave("plot/pdf/gpt2_verb_mask/gpt4_xsum_gpt2_verb_mask.pdf", plot=p, width=3, height=3)
 
 
 
@@ -164,7 +164,7 @@ p <- ggplot(d.gpt4, aes(freq, power, color=type)) +
           legend.position.inside = c(0.75, 0.2)
           )
     
-ggsave("plot/pdf/gpt2_verb_mask/gpt-3.5-turbo_pubmed_gpt2_verb_mask.pdf", plot=p, width=5, height=5)
+ggsave("plot/pdf/gpt2_verb_mask/gpt-3.5-turbo_pubmed_gpt2_verb_mask.pdf", plot=p, width=3, height=3)
 
 
 
@@ -203,7 +203,7 @@ p <- ggplot(d.gpt4, aes(freq, power, color=type)) +
           legend.position.inside = c(0.75, 0.2)
           )
     
-ggsave("plot/pdf/gpt2_verb_mask/gpt-3.5-turbo_writing_gpt2_verb_mask.pdf", plot=p, width=5, height=5)
+ggsave("plot/pdf/gpt2_verb_mask/gpt-3.5-turbo_writing_gpt2_verb_mask.pdf", plot=p, width=3, height=3)
 
 
 # GPT4:  Xsum
@@ -241,7 +241,7 @@ p <- ggplot(d.gpt4, aes(freq, power, color=type)) +
           legend.position.inside = c(0.75, 0.2)
           )
     
-ggsave("plot/pdf/gpt2_verb_mask/gpt-3.5-turbo_xsum_gpt2_verb_mask.pdf", plot=p, width=5, height=5)
+ggsave("plot/pdf/gpt2_verb_mask/gpt-3.5-turbo_xsum_gpt2_verb_mask.pdf", plot=p, width=3, height=3)
 
 
 
@@ -283,7 +283,7 @@ p <- ggplot(d.gpt4, aes(freq, power, color=type)) +
           legend.position.inside = c(0.75, 0.2)
           )
     
-ggsave("plot/pdf/gpt2_verb_mask/davinci_pubmed_gpt2_verb_mask.pdf", plot=p, width=5, height=5)
+ggsave("plot/pdf/gpt2_verb_mask/davinci_pubmed_gpt2_verb_mask.pdf", plot=p, width=3, height=3)
 
 
 
@@ -322,7 +322,7 @@ p <- ggplot(d.gpt4, aes(freq, power, color=type)) +
           legend.position.inside = c(0.75, 0.2)
           )
     
-ggsave("plot/pdf/gpt2_verb_mask/davinci_writing_gpt2_verb_mask.pdf", plot=p, width=5, height=5)
+ggsave("plot/pdf/gpt2_verb_mask/davinci_writing_gpt2_verb_mask.pdf", plot=p, width=3, height=3)
 
 
 # GPT4:  Xsum
@@ -360,4 +360,4 @@ p <- ggplot(d.gpt4, aes(freq, power, color=type)) +
           legend.position.inside = c(0.75, 0.2)
           )
     
-ggsave("plot/pdf/gpt2_verb_mask/davinci_xsum_gpt2_verb_mask.pdf", plot=p, width=5, height=5)
+ggsave("plot/pdf/gpt2_verb_mask/davinci_xsum_gpt2_verb_mask.pdf", plot=p, width=3, height=3)
