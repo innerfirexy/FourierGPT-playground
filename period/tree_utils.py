@@ -1,16 +1,16 @@
 from collections import deque
 
 class Tree(object):
-    def __init__(self, node_str) -> None:
-        assert self.is_valid(node_str), f"Invalid node string: {node_str}"
-        node_str = self.clean_outer_parens(node_str)
-        head, children = self.parse_node_str(node_str)
+    def __init__(self, tree_str) -> None:
+        assert self.is_valid(tree_str), f"Invalid node string: {tree_str}"
+        tree_str = self.clean_outer_parens(tree_str)
+        head, children = self.parse_tree_str(tree_str)
         self.head = head
         self.children = children
     
-    def is_valid(self, node_str):
+    def is_valid(self, tree_str):
         lp_stack = deque()
-        for char in node_str:
+        for char in tree_str:
             if char == '(':
                 lp_stack.append(char)
             elif char == ')':
@@ -19,21 +19,24 @@ class Tree(object):
                 lp_stack.pop()
         return True
     
-    def clean_outer_parens(self, node_str):
+    def clean_outer_parens(self, tree_str):
         """
         Remove outer parentheses and leading space
         Example: ( (S (NP-SBJ The federal government) ... .)), which is typical in PennTreebank .prd files
         """
-        if node_str[0] == '(' and node_str[-1] == ')' and node_str[1] == ' ':
-            return node_str[2:-1]
-        return node_str
+        if tree_str[0] == '(' and tree_str[-1] == ')' and tree_str[1] == ' ':
+            return tree_str[1:-1].strip()
+        return tree_str
     
-    def parse_node_str(self, node_str: str):
+    def parse_tree_str(self, tree_str: str):
         # find the index that splits head and children
         # - if the right child is a leaf node, then it is the first space to the right of head
         # - if the right child is non-leaf, then there could be no space, but the left parenthesis serves as the delimiter
         #   - For example, the first space in `(NP-SBJ (PDT all)(DT the)` could be omitted.
-        str_chopped = node_str[1:-1]
+        assert tree_str[0] == '(' and tree_str[-1] == ')'
+        str_chopped = tree_str[1:-1]
+
+        # find the first space or left parenthesis
         for i, char in enumerate(str_chopped):
             if char == ' ':
                 head = str_chopped[:i]
@@ -62,19 +65,25 @@ class Tree(object):
         # recursive calls
         children = []
         for i, (li, ri) in enumerate(paren_indices):
-            # check if there is gap >0 between the previous (prev_li, prev_ri) and current (li, ri)
+            # check if there is gap > 0 between the previous (prev_li, prev_ri) and current (li, ri)
             # if so, then the gap is the children of the current head
             if i == 0:
                 if li > 0:
-                    children.append(children_str[:li])
-                children.append(self.parse_node_str(children_str[li: ri+1]))
+                    candidate = children_str[:li]
+                    if candidate.strip() != '': # skip space in children_str
+                        children.append(candidate.strip()) # remove any trailing space
+                children.append(self.parse_tree_str(children_str[li: ri+1]))
             else:
                 _, prev_ri = paren_indices[i-1]
                 if li > prev_ri + 1:
-                    children.append(children_str[prev_ri+1:li])
-                children.append(self.parse_node_str(children_str[li: ri+1]))
+                    candidate = children_str[prev_ri+1:li]
+                    if candidate.strip() != '': # skip space in children_str
+                        children.append(candidate.strip())
+                children.append(self.parse_tree_str(children_str[li: ri+1]))
                 if i == len(paren_indices) - 1 and ri < len(children_str) - 1:
-                    children.append(children_str[ri+1:])
+                    candidate = children_str[ri+1:]
+                    if candidate.strip() != '': # skip space in children_str
+                        children.append(candidate.strip())
             
         return head, children
     
