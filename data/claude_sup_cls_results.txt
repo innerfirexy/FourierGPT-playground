@@ -1,0 +1,111 @@
+--- Claude-Haiku XSum ---
+Claude-3-Opus
+Mean Acc: 0.7967
+Mean AUROC: 0.8909
+Claude-3-Haiku
+Mean Acc: 0.8000
+Mean AUROC: 0.8787
+Claude-3.5-Haiku
+Mean Acc: 0.7600
+Mean AUROC: 0.8696
+------------
+--- Claude-Haiku Writing ---
+Claude-3-Opus
+Mean Acc: 0.8533
+Mean AUROC: 0.9322
+Claude-3-Haiku
+Mean Acc: 0.8467
+Mean AUROC: 0.9400
+Claude-3.5-Haiku
+Mean Acc: 0.7167
+Mean AUROC: 0.7824
+------------
+--- Claude-Haiku PubMed ---
+Claude-3-Opus
+Mean Acc: 0.8167
+Mean AUROC: 0.8989
+Claude-3-Haiku
+Mean Acc: 0.8433
+Mean AUROC: 0.9298
+Claude-3.5-Haiku
+Mean Acc: 0.7233
+Mean AUROC: 0.7976
+------------
+--- Claude-Haiku PeerRead ---
+Claude-3-Opus
+Mean Acc: 0.7367
+Mean AUROC: 0.8064
+Claude-3-Haiku
+Mean Acc: 0.7900
+Mean AUROC: 0.8531
+Claude-3.5-Haiku
+Mean Acc: 0.9567
+Mean AUROC: 0.9771
+------------
+--- Claude-Haiku Harmful ---
+Claude-3-Opus
+Mean Acc: 0.6167
+Mean AUROC: 0.6878
+Claude-3-Haiku
+Mean Acc: 0.6467
+Mean AUROC: 0.7116
+Claude-3.5-Haiku
+Mean Acc: 0.7067
+Mean AUROC: 0.7824
+------------
+--- Claude-Sonnet XSum ---
+Claude-3-Sonnet
+Mean Acc: 0.7167
+Mean AUROC: 0.7691
+Claude-3.5-Sonnet (2024-06-20)
+Mean Acc: 0.7100
+Mean AUROC: 0.7904
+Claude-3.5-Sonnet (2024-10-22)
+Mean Acc: 0.6300
+Mean AUROC: 0.6758
+------------
+--- Claude-Sonnet Writing ---
+Claude-3-Sonnet
+Mean Acc: 0.8167
+Mean AUROC: 0.8933
+Claude-3.5-Sonnet (2024-06-20)
+Mean Acc: 0.7733
+Mean AUROC: 0.8398
+Claude-3.5-Sonnet (2024-10-22)
+Mean Acc: 0.6400
+Mean AUROC: 0.6922
+------------
+--- Claude-Sonnet PubMed ---
+Claude-3-Sonnet
+Mean Acc: 0.8567
+Mean AUROC: 0.9231
+Claude-3.5-Sonnet (2024-06-20)
+Mean Acc: 0.7600
+Mean AUROC: 0.8556
+Claude-3.5-Sonnet (2024-10-22)
+Mean Acc: 0.7567
+Mean AUROC: 0.8109
+------------
+--- Claude-Sonnet PeerRead ---
+Claude-3-Sonnet
+Mean Acc: 0.7467
+Mean AUROC: 0.8320
+Claude-3.5-Sonnet (2024-06-20)
+Mean Acc: 0.6900
+Mean AUROC: 0.7418
+Claude-3.5-Sonnet (2024-10-22)
+Mean Acc: 0.6133
+Mean AUROC: 0.6673
+------------
+--- Claude-Sonnet Harmful ---
+Claude-3-Sonnet
+Mean Acc: 0.7000
+Mean AUROC: 0.7711
+Claude-3.5-Sonnet (2024-06-20)
+Mean Acc: 0.6633
+Mean AUROC: 0.6851
+Claude-3.5-Sonnet (2024-10-22)
+Mean Acc: 0.5700
+Mean AUROC: 0.6280
+------------
+Done
