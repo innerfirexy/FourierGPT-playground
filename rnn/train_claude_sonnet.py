@@ -161,7 +161,7 @@ def main():
         'train_split': 0.8,
         'val_split': 0.1,
         'max_length': None,  # None表示使用所有数据
-        'device': 'cpu'
+        'device': 'cuda'
     }
     
     # 数据路径
