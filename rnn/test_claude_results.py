@@ -14,7 +14,7 @@ def run_inference(model_path, input_file):
             'python', 'inference.py',
             '--model_path', model_path,
             '--input_file', input_file
-        ], capture_output=True, text=True, cwd='rnn')
+        ], capture_output=True, text=True, cwd='.')
         
         if result.returncode == 0:
             # 解析输出找到人类和ChatGPT的百分比
@@ -44,7 +44,7 @@ def run_inference(model_path, input_file):
 def main():
     """主函数"""
     # 模型路径
-    model_path = "outputs/run_20250810_192402/checkpoints/best_model_epoch_10.pth"
+    model_path = "outputs/claude_sonnet_run_20250811_025519/best_model_epoch_13.pth"
     
     # Claude-Sonnet harmful数据文件
     test_files = [
@@ -153,6 +153,10 @@ def main():
         avg_accuracy = total_accuracy / valid_tests
         print("-" * 80)
         print(f"{'平均准确率':<35} {'':<8} {'':<8} {'':<10} {avg_accuracy:<8.1f}")
+    else:
+        avg_accuracy = 0.0
+        print("-" * 80)
+        print(f"{'平均准确率':<35} {'':<8} {'':<8} {'':<10} {avg_accuracy:<8.1f}")
     
     print("\n" + "=" * 80)
     print("分析:")
@@ -165,10 +169,14 @@ def main():
     if human_tests:
         human_avg = sum(r['accuracy'] for r in human_tests) / len(human_tests)
         print(f"人类数据检测平均准确率: {human_avg:.1f}%")
+    else:
+        print("人类数据检测平均准确率: 0.0%")
     
     if model_tests:
         model_avg = sum(r['accuracy'] for r in model_tests) / len(model_tests)
         print(f"模型数据检测平均准确率: {model_avg:.1f}%")
+    else:
+        print("模型数据检测平均准确率: 0.0%")
     
     print(f"总体平均准确率: {avg_accuracy:.1f}%")
 
