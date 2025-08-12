@@ -4,8 +4,6 @@ Claude模型AUROC时间线实验
 对比训练好的分类器在不同时间点Claude版本上的表现
 """
 
-import sys
-sys.path.append('..')
 from run_fft import FFTProcessor
 import numpy as np
 import pandas as pd
@@ -135,9 +133,9 @@ def run_timeline_experiment():
         print(f"  训练AUROC: {train_auroc:.4f}")
         
         # 2. test_data1 上的测试
-        classifier_path = f"best_claude_{domain}_classifier.pkl"
-        test1_human = f"./test_data1/{domain}_claude-3-haiku-20240307_human.txt"
-        test1_model = f"./test_data1/{domain}_claude-3-haiku-20240307_model.txt"
+        classifier_path = f"best_claude-haiku_{domain}_classifier.pkl"
+        test1_human = f"./test_data1_claude-haiku/{domain}_claude-3-haiku-20240307_human.txt"
+        test1_model = f"./test_data1_claude-haiku/{domain}_claude-3-haiku-20240307_model.txt"
         
         if os.path.exists(test1_human) and os.path.exists(test1_model):
             test1_auroc = test_classifier_auroc(classifier_path, test1_human, test1_model)
@@ -148,8 +146,8 @@ def run_timeline_experiment():
             auroc_scores.append(np.nan)
         
         # 3. test_data2 上的测试
-        test2_human = f"./test_data2/{domain}_claude-3-5-haiku-20241022_human.txt"
-        test2_model = f"./test_data2/{domain}_claude-3-5-haiku-20241022_model.txt"
+        test2_human = f"./test_data2_claude-haiku/{domain}_claude-3-5-haiku-20241022_human.txt"
+        test2_model = f"./test_data2_claude-haiku/{domain}_claude-3-5-haiku-20241022_model.txt"
         
         if os.path.exists(test2_human) and os.path.exists(test2_model):
             test2_auroc = test_classifier_auroc(classifier_path, test2_human, test2_model)

@@ -3,8 +3,6 @@
 测试训练好的分类器在新数据上的表现
 """
 
-import sys
-sys.path.append('..')
 from run_fft import FFTProcessor
 import numpy as np
 import pandas as pd

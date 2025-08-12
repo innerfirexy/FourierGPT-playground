@@ -1,5 +1,3 @@
-import sys
-sys.path.append('..')
 from run_fft import FFTProcessor
 import numpy as np
 import pandas as pd
