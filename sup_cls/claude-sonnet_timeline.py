@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Claude模型AUROC时间线实验
-对比训练好的分类器在不同时间点Claude版本上的表现
+Claude-Sonnet模型AUROC时间线实验
+对比训练好的分类器在不同时间点Claude-Sonnet版本上的表现
 """
 
 from run_fft import FFTProcessor
@@ -104,8 +104,8 @@ def get_train_auroc(domain: str, classifier_path: str):
     """
     计算训练集上的AUROC分数
     """
-    train_human = f"./train_data_claude-haiku/{domain}_claude-3-opus-20240229_human.txt"
-    train_model = f"./train_data_claude-haiku/{domain}_claude-3-opus-20240229_model.txt"
+    train_human = f"./train_data_claude-sonnet/{domain}_claude-3-sonnet-20240229_human.txt"
+    train_model = f"./train_data_claude-sonnet/{domain}_claude-3-sonnet-20240229_model.txt"
     
     if os.path.exists(train_human) and os.path.exists(train_model) and os.path.exists(classifier_path):
         return test_classifier_auroc(classifier_path, train_human, train_model)
@@ -115,18 +115,18 @@ def get_train_auroc(domain: str, classifier_path: str):
 
 def run_timeline_experiment():
     """
-    运行时间线实验
+    运行Claude-Sonnet时间线实验
     """
     # 定义域列表
     domains = ['writing', 'pubmed', 'xsum', 'peerread', 'harmful']
     
     # 定义时间点
-    timepoints = ['2024-02-29\n(opus)', '2024-03-07\n(haiku)', '2024-10-22\n(haiku-3.5)']
+    timepoints = ['2024-02-29\n(sonnet)', '2024-06-20\n(sonnet-3.5)', '2024-10-22\n(sonnet-3.5)']
     
     # 存储结果
     results = {}
     
-    print("开始时间线实验...")
+    print("开始Claude-Sonnet时间线实验...")
     
     for domain in domains:
         print(f"\n处理 {domain} domain...")
@@ -135,15 +135,15 @@ def run_timeline_experiment():
         auroc_scores = []
         
         # 1. 训练数据上的AUROC（动态计算）
-        classifier_path = f"best_claude-haiku_{domain}_classifier.pkl"
+        classifier_path = f"best_claude-sonnet_{domain}_classifier.pkl"
         train_auroc = get_train_auroc(domain, classifier_path)
         auroc_scores.append(train_auroc)
         print(f"  训练AUROC: {train_auroc:.4f}")
         
         # 2. test_data1 上的测试
-        classifier_path = f"best_claude-haiku_{domain}_classifier.pkl"
-        test1_human = f"./test_data1_claude-haiku/{domain}_claude-3-haiku-20240307_human.txt"
-        test1_model = f"./test_data1_claude-haiku/{domain}_claude-3-haiku-20240307_model.txt"
+        classifier_path = f"best_claude-sonnet_{domain}_classifier.pkl"
+        test1_human = f"./test_data1_claude-sonnet/{domain}_claude-3-5-sonnet-20240620_human.txt"
+        test1_model = f"./test_data1_claude-sonnet/{domain}_claude-3-5-sonnet-20240620_model.txt"
         
         if os.path.exists(test1_human) and os.path.exists(test1_model):
             test1_auroc = test_classifier_auroc(classifier_path, test1_human, test1_model)
@@ -154,8 +154,8 @@ def run_timeline_experiment():
             auroc_scores.append(np.nan)
         
         # 3. test_data2 上的测试
-        test2_human = f"./test_data2_claude-haiku/{domain}_claude-3-5-haiku-20241022_human.txt"
-        test2_model = f"./test_data2_claude-haiku/{domain}_claude-3-5-haiku-20241022_model.txt"
+        test2_human = f"./test_data2_claude-sonnet/{domain}_claude-3-5-sonnet-20241022_human.txt"
+        test2_model = f"./test_data2_claude-sonnet/{domain}_claude-3-5-sonnet-20241022_model.txt"
         
         if os.path.exists(test2_human) and os.path.exists(test2_model):
             test2_auroc = test_classifier_auroc(classifier_path, test2_human, test2_model)
@@ -193,7 +193,7 @@ def plot_timeline(results, timepoints, save_path=None):
     
     plt.xlabel('Time Point', fontsize=12)
     plt.ylabel('AUROC Score', fontsize=12)
-    plt.title('Claude Model Classification Performance Over Time', fontsize=14, fontweight='bold')
+    plt.title('Claude-Sonnet Model Classification Performance Over Time', fontsize=14, fontweight='bold')
     
     plt.xticks(range(len(timepoints)), timepoints, fontsize=10)
     plt.ylim(0.4, 1.0)
@@ -216,7 +216,7 @@ def print_results_table(results, timepoints):
     打印结果表格
     """
     print("\n" + "="*80)
-    print("AUROC 结果汇总表")
+    print("Claude-Sonnet AUROC 结果汇总表")
     print("="*80)
     
     # 打印表头
@@ -240,8 +240,8 @@ def print_results_table(results, timepoints):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Claude模型时间线实验')
-    parser.add_argument('--save_plot', type=str, default='claude_timeline.pdf',
+    parser = argparse.ArgumentParser(description='Claude-Sonnet模型时间线实验')
+    parser.add_argument('--save_plot', type=str, default='claude-sonnet_timeline.pdf',
                        help='保存图表的路径')
     parser.add_argument('--no_plot', action='store_true', default=False,
                        help='不显示图表')
