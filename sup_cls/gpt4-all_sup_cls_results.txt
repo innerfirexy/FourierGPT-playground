@@ -1,0 +1,71 @@
+--- GPT4 XSum ---
+GPT-4
+Mean Acc: 0.5800
+Mean AUROC: 0.6338
+GPT-4-1106-preview
+Mean Acc: 0.5800
+Mean AUROC: 0.6182
+GPT-4-0125-preview
+Mean Acc: 0.6900
+Mean AUROC: 0.7353
+GPT-4-Turbo (2024-04-09)
+Mean Acc: 0.5733
+Mean AUROC: 0.6291
+------------
+--- GPT4 Writing ---
+GPT-4
+Mean Acc: 0.6633
+Mean AUROC: 0.6938
+GPT-4-1106-preview
+Mean Acc: 0.6267
+Mean AUROC: 0.6322
+GPT-4-0125-preview
+Mean Acc: 0.6500
+Mean AUROC: 0.6991
+GPT-4-Turbo (2024-04-09)
+Mean Acc: 0.5433
+Mean AUROC: 0.5693
+------------
+--- GPT4 PubMed ---
+GPT-4
+Mean Acc: 0.8233
+Mean AUROC: 0.8944
+GPT-4-1106-preview
+Mean Acc: 0.7800
+Mean AUROC: 0.8782
+GPT-4-0125-preview
+Mean Acc: 0.7867
+Mean AUROC: 0.8804
+GPT-4-Turbo (2024-04-09)
+Mean Acc: 0.7933
+Mean AUROC: 0.8713
+------------
+--- GPT4 PeerRead ---
+GPT-4
+Mean Acc: 0.6000
+Mean AUROC: 0.6609
+GPT-4-1106-preview
+Mean Acc: 0.5900
+Mean AUROC: 0.6551
+GPT-4-0125-preview
+Mean Acc: 0.6633
+Mean AUROC: 0.7376
+GPT-4-Turbo (2024-04-09)
+Mean Acc: 0.6000
+Mean AUROC: 0.6696
+------------
+--- GPT4 Harmful ---
+GPT-4
+Mean Acc: 0.5600
+Mean AUROC: 0.5829
+GPT-4-1106-preview
+Mean Acc: 0.5433
+Mean AUROC: 0.5751
+GPT-4-0125-preview
+Mean Acc: 0.5567
+Mean AUROC: 0.6044
+GPT-4-Turbo (2024-04-09)
+Mean Acc: 0.5433
+Mean AUROC: 0.5911
+------------
+Done
