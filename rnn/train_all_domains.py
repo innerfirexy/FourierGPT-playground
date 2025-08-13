@@ -30,7 +30,7 @@ def get_domain_configs():
                 'learning_rate': 0.001,
                 'num_epochs': 50,
                 'cv_folds': 5,
-                'device': 'cpu'
+                'device': 'cuda'
             })
     
     return configs
