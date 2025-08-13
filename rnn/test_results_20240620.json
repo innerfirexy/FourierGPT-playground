@@ -1,0 +1,74 @@
+{
+  "model_path": "outputs/claude_sonnet_run_20250811_025519/best_model_epoch_13.pth",
+  "human_file": "claude_sonnet_training/test/test_20240620_human.txt",
+  "model_file": "claude_sonnet_training/test/test_20240620_model.txt",
+  "metrics": {
+    "accuracy": 0.8293333333333334,
+    "precision_weighted": 0.8438298093484587,
+    "recall_weighted": 0.8293333333333334,
+    "f1_weighted": 0.8275152675938919,
+    "precision_per_class": [
+      0.7732300884955752,
+      0.9144295302013423
+    ],
+    "recall_per_class": [
+      0.932,
+      0.7266666666666667
+    ],
+    "f1_per_class": [
+      0.845223700120919,
+      0.8098068350668648
+    ],
+    "confusion_matrix": [
+      [
+        699,
+        51
+      ],
+      [
+        205,
+        545
+      ]
+    ],
+    "classification_report": {
+      "Human": {
+        "precision": 0.7732300884955752,
+        "recall": 0.932,
+        "f1-score": 0.845223700120919,
+        "support": 750.0
+      },
+      "Model": {
+        "precision": 0.9144295302013423,
+        "recall": 0.7266666666666667,
+        "f1-score": 0.8098068350668648,
+        "support": 750.0
+      },
+      "accuracy": 0.8293333333333334,
+      "macro avg": {
+        "precision": 0.8438298093484587,
+        "recall": 0.8293333333333334,
+        "f1-score": 0.8275152675938919,
+        "support": 1500.0
+      },
+      "weighted avg": {
+        "precision": 0.8438298093484587,
+        "recall": 0.8293333333333334,
+        "f1-score": 0.8275152675938919,
+        "support": 1500.0
+      }
+    },
+    "sample_counts": {
+      "total": 1500,
+      "human": 750,
+      "model": 750
+    }
+  },
+  "args": {
+    "model_path": "outputs/claude_sonnet_run_20250811_025519/best_model_epoch_13.pth",
+    "human_file": "claude_sonnet_training/test/test_20240620_human.txt",
+    "model_file": "claude_sonnet_training/test/test_20240620_model.txt",
+    "max_length": null,
+    "batch_size": 32,
+    "device": "cpu",
+    "output": "test_results_20240620.json"
+  }
+}

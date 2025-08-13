@@ -1,0 +1,74 @@
+{
+  "model_path": "outputs/claude_sonnet_run_20250811_025519/best_model_epoch_13.pth",
+  "human_file": "claude_sonnet_training/test/test_20241022_human.txt",
+  "model_file": "claude_sonnet_training/test/test_20241022_model.txt",
+  "metrics": {
+    "accuracy": 0.6986666666666667,
+    "precision_weighted": 0.7564461497507825,
+    "recall_weighted": 0.6986666666666667,
+    "f1_weighted": 0.6806803110682422,
+    "precision_per_class": [
+      0.6347197106690777,
+      0.8781725888324873
+    ],
+    "recall_per_class": [
+      0.936,
+      0.4613333333333333
+    ],
+    "f1_per_class": [
+      0.7564655172413793,
+      0.6048951048951049
+    ],
+    "confusion_matrix": [
+      [
+        702,
+        48
+      ],
+      [
+        404,
+        346
+      ]
+    ],
+    "classification_report": {
+      "Human": {
+        "precision": 0.6347197106690777,
+        "recall": 0.936,
+        "f1-score": 0.7564655172413793,
+        "support": 750.0
+      },
+      "Model": {
+        "precision": 0.8781725888324873,
+        "recall": 0.4613333333333333,
+        "f1-score": 0.6048951048951049,
+        "support": 750.0
+      },
+      "accuracy": 0.6986666666666667,
+      "macro avg": {
+        "precision": 0.7564461497507825,
+        "recall": 0.6986666666666667,
+        "f1-score": 0.6806803110682421,
+        "support": 1500.0
+      },
+      "weighted avg": {
+        "precision": 0.7564461497507825,
+        "recall": 0.6986666666666667,
+        "f1-score": 0.6806803110682422,
+        "support": 1500.0
+      }
+    },
+    "sample_counts": {
+      "total": 1500,
+      "human": 750,
+      "model": 750
+    }
+  },
+  "args": {
+    "model_path": "outputs/claude_sonnet_run_20250811_025519/best_model_epoch_13.pth",
+    "human_file": "claude_sonnet_training/test/test_20241022_human.txt",
+    "model_file": "claude_sonnet_training/test/test_20241022_model.txt",
+    "max_length": null,
+    "batch_size": 32,
+    "device": "cpu",
+    "output": "test_results_20241022.json"
+  }
+}
