@@ -16,6 +16,7 @@ import argparse
 from datetime import datetime
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
+from tqdm import tqdm
 
 # 添加当前目录到路径
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -94,7 +95,9 @@ class DomainClassifierTrainer:
         
         print(f"开始训练 Fold {fold_idx + 1}")
         
-        for epoch in range(self.config['training']['num_epochs']):
+        for epoch in tqdm(range(self.config['training']['num_epochs']), 
+                         desc=f"Fold {fold_idx + 1} training", 
+                         leave=False):
             # 训练
             train_loss, train_acc = trainer.train_epoch(train_loader, optimizer)
             
@@ -164,7 +167,9 @@ class DomainClassifierTrainer:
         
         fold_results = []
         
-        for fold_idx, (train_indices, val_indices) in enumerate(skf.split(range(len(dataset)), all_labels)):
+        for fold_idx, (train_indices, val_indices) in enumerate(tqdm(skf.split(range(len(dataset)), all_labels), 
+                                                                   total=n_splits, 
+                                                                   desc="Cross-validation folds")):
             print(f"\n=== Fold {fold_idx + 1}/{n_splits} ===")
             
             # 创建fold数据集
@@ -326,6 +331,8 @@ def main():
                        help='数据域')
     parser.add_argument('--model_version', type=str, required=True,
                        help='模型版本 (如: claude-3-haiku-20240307)')
+    parser.add_argument('--file_model_version', type=str, required=True,
+                       help='文件名中的模型版本 (如: claude-3-haiku-20240307)')
     parser.add_argument('--output_dir', type=str, required=True,
                        help='输出目录')
     
@@ -361,8 +368,8 @@ def main():
     
     # 构建数据文件路径
     data_dir = "../data/Claude/Claude-Haiku"
-    human_file = os.path.join(data_dir, f"{args.domain}_{args.model_version}_human.txt")
-    model_file = os.path.join(data_dir, f"{args.domain}_{args.model_version}_model.txt")
+    human_file = os.path.join(data_dir, f"{args.domain}_{args.file_model_version}_human.txt")
+    model_file = os.path.join(data_dir, f"{args.domain}_{args.file_model_version}_model.txt")
     
     # 检查文件是否存在
     if not os.path.exists(human_file):
