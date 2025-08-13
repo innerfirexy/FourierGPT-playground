@@ -6,7 +6,7 @@
 set -e  # Exit on any error
 
 # Configuration
-DOMAINS=("harmful", "writing" "xsum" "peerread" "pubmed")
+DOMAINS=("writing" "xsum" "peerread" "pubmed")
 MODEL_VERSIONS=("claude-3-opus-20240229" "claude-3-haiku-20240307" "claude-3-5-haiku-20241022")
 
 # Training parameters

@@ -27,7 +27,13 @@ def load_model(model_path, config):
         dropout=model_config['dropout']
     )
     
-    checkpoint = torch.load(model_path, map_location='cpu')
+    try:
+        # Try with weights_only=True first (PyTorch 2.6+ default)
+        checkpoint = torch.load(model_path, map_location='cpu', weights_only=True)
+    except:
+        # Fallback to weights_only=False for compatibility
+        checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
+    
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     return model
@@ -120,18 +126,19 @@ def get_domain_data_paths(domain, model_version):
     return human_file, model_file
 
 def test_cross_domain_performance():
-    """Test cross-domain performance of Harmful-trained classifiers"""
+    """Test cross-domain performance of all trained classifiers"""
     
     # Define domains and model versions to test
-    domains = ['writing', 'xsum', 'peerread', 'pubmed']
+    domains = ['harmful', 'writing', 'xsum', 'peerread', 'pubmed']
     model_versions = ['3-opus-20240229', '3-haiku-20240307', '3-5-haiku-20241022']
     
-    # Load model configurations
-    harmful_experiments = [
-        'harmful_opus_20240229',
-        'harmful_haiku_20240307', 
-        'harmful_haiku35_20241022'
-    ]
+    # Define all experiments
+    all_experiments = []
+    for domain in domains:
+        for model_version in model_versions:
+            short_version = model_version.replace('-', '_').replace('.', '')
+            exp_name = f"{domain}_{short_version}"
+            all_experiments.append((exp_name, domain, model_version))
     
     results = {}
     
@@ -139,12 +146,16 @@ def test_cross_domain_performance():
     print("CROSS-DOMAIN PERFORMANCE TESTING")
     print("="*80)
     
-    for exp_name, model_version in zip(harmful_experiments, model_versions):
+    for exp_name, train_domain, model_version in all_experiments:
         print(f"\nTesting classifier trained on {exp_name} ({model_version})")
         print("-" * 60)
         
         # Load model configuration
         config_path = f"outputs/domain_experiments/{exp_name}/config.json"
+        if not os.path.exists(config_path):
+            print(f"Warning: Config not found at {config_path}")
+            continue
+            
         with open(config_path, 'r') as f:
             config = json.load(f)
         
@@ -159,15 +170,19 @@ def test_cross_domain_performance():
         
         domain_results = {}
         
-        for domain in domains:
-            print(f"  Testing on {domain} domain...")
+        # Test on all domains except the training domain
+        for test_domain in domains:
+            if test_domain == train_domain:
+                continue  # Skip same domain testing
+                
+            print(f"  Testing on {test_domain} domain...")
             
             try:
                 # Get data paths
-                human_file, model_file = get_domain_data_paths(domain, model_version)
+                human_file, model_file = get_domain_data_paths(test_domain, model_version)
                 
                 if not os.path.exists(human_file) or not os.path.exists(model_file):
-                    print(f"    Warning: Data files not found for {domain}")
+                    print(f"    Warning: Data files not found for {test_domain}")
                     continue
                 
                 # Load test data
@@ -176,7 +191,7 @@ def test_cross_domain_performance():
                 # Evaluate model
                 metrics = evaluate_model(model, test_loader, device='cpu')
                 
-                domain_results[domain] = {
+                domain_results[test_domain] = {
                     'metrics': metrics,
                     'data_size': {'human': n_human, 'model': n_model}
                 }
@@ -184,10 +199,11 @@ def test_cross_domain_performance():
                 print(f"    Accuracy: {metrics['accuracy']:.3f}, AUC: {metrics['auc']:.3f}")
                 
             except Exception as e:
-                print(f"    Error testing on {domain}: {str(e)}")
+                print(f"    Error testing on {test_domain}: {str(e)}")
                 continue
         
         results[exp_name] = {
+            'train_domain': train_domain,
             'model_version': model_version,
             'domain_results': domain_results
         }
@@ -264,38 +280,37 @@ def create_confusion_matrices(results, training_results):
         # Create confusion matrix
         confusion_matrix = np.zeros((len(domains), len(domains)))
         
+        # Map domain names to indices
+        domain_to_idx = {domain: i for i, domain in enumerate(domains)}
+        
         # Fill diagonal with training results (same domain performance)
         for i, domain in enumerate(domains):
             if training_results[domain][model_version] is not None:
                 confusion_matrix[i, i] = training_results[domain][model_version]
         
         # Fill cross-domain results
-        # Find the corresponding harmful experiment
-        harmful_exp = None
-        for exp_name in results.keys():
-            if model_version in exp_name:
-                harmful_exp = exp_name
-                break
+        # Find all experiments for this model version
+        for exp_name, exp_data in results.items():
+            if exp_data['model_version'] == model_version:
+                train_domain = exp_data['train_domain']
+                train_idx = domain_to_idx[train_domain]
+                
+                # Fill cross-domain results
+                for test_domain, domain_data in exp_data['domain_results'].items():
+                    if test_domain in domain_to_idx:
+                        test_idx = domain_to_idx[test_domain]
+                        confusion_matrix[train_idx, test_idx] = domain_data['metrics']['auc']
         
-        if harmful_exp and harmful_exp in results:
-            harmful_results = results[harmful_exp]['domain_results']
-            
-            # Map domain names to indices
-            domain_to_idx = {domain: i for i, domain in enumerate(domains)}
-            
-            # Fill cross-domain results (harmful model tested on other domains)
-            harmful_idx = domain_to_idx['harmful']
-            for domain, domain_data in harmful_results.items():
-                if domain in domain_to_idx:
-                    test_idx = domain_to_idx[domain]
-                    confusion_matrix[harmful_idx, test_idx] = domain_data['metrics']['auc']
+        # Debug: Print the confusion matrix
+        print(f"\nConfusion Matrix for {model_name}:")
+        print(confusion_matrix)
         
         # Create heatmap
         sns.heatmap(confusion_matrix, 
                    annot=True, 
                    fmt='.3f', 
                    cmap='RdYlBu_r', 
-                   vmin=0.5, 
+                   vmin=0.0, 
                    vmax=1.0,
                    cbar_kws={'label': 'AUC'},
                    ax=ax)
@@ -400,8 +415,7 @@ def main():
     
     # Create visualizations
     if results:
-        print("Creating visualizations...")
-        create_cross_domain_visualization(results)
+        print("Creating confusion matrices...")
         create_confusion_matrices(results, training_results)
     
     print("\nCross-domain testing completed!")
