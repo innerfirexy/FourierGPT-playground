@@ -215,6 +215,103 @@ def test_cross_domain_performance():
     
     return results
 
+def load_training_results():
+    """Load training results from all domain experiments"""
+    import os
+    import json
+    
+    domains = ['harmful', 'writing', 'xsum', 'peerread', 'pubmed']
+    model_versions = ['3-opus-20240229', '3-haiku-20240307', '3-5-haiku-20241022']
+    
+    training_results = {}
+    
+    for domain in domains:
+        training_results[domain] = {}
+        for model_version in model_versions:
+            # Generate output directory name
+            short_version = model_version.replace('-', '_').replace('.', '')
+            exp_dir = f"outputs/domain_experiments/{domain}_{short_version}"
+            
+            # Check if cv_results.json exists
+            cv_results_path = os.path.join(exp_dir, 'cv_results.json')
+            if os.path.exists(cv_results_path):
+                try:
+                    with open(cv_results_path, 'r') as f:
+                        cv_results = json.load(f)
+                    training_results[domain][model_version] = cv_results['mean_auc']
+                except:
+                    training_results[domain][model_version] = None
+            else:
+                training_results[domain][model_version] = None
+    
+    return training_results
+
+def create_confusion_matrices(results, training_results):
+    """Create confusion matrices for all model versions"""
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    
+    domains = ['harmful', 'writing', 'xsum', 'peerread', 'pubmed']
+    model_versions = ['3-opus-20240229', '3-haiku-20240307', '3-5-haiku-20241022']
+    model_names = ['3-Opus', '3-Haiku', '3.5-Haiku']
+    
+    # Create figure with 3 subplots (one for each model version)
+    fig, axes = plt.subplots(1, 3, figsize=(20, 6))
+    
+    for idx, (model_version, model_name) in enumerate(zip(model_versions, model_names)):
+        ax = axes[idx]
+        
+        # Create confusion matrix
+        confusion_matrix = np.zeros((len(domains), len(domains)))
+        
+        # Fill diagonal with training results (same domain performance)
+        for i, domain in enumerate(domains):
+            if training_results[domain][model_version] is not None:
+                confusion_matrix[i, i] = training_results[domain][model_version]
+        
+        # Fill cross-domain results
+        # Find the corresponding harmful experiment
+        harmful_exp = None
+        for exp_name in results.keys():
+            if model_version in exp_name:
+                harmful_exp = exp_name
+                break
+        
+        if harmful_exp and harmful_exp in results:
+            harmful_results = results[harmful_exp]['domain_results']
+            
+            # Map domain names to indices
+            domain_to_idx = {domain: i for i, domain in enumerate(domains)}
+            
+            # Fill cross-domain results (harmful model tested on other domains)
+            harmful_idx = domain_to_idx['harmful']
+            for domain, domain_data in harmful_results.items():
+                if domain in domain_to_idx:
+                    test_idx = domain_to_idx[domain]
+                    confusion_matrix[harmful_idx, test_idx] = domain_data['metrics']['auc']
+        
+        # Create heatmap
+        sns.heatmap(confusion_matrix, 
+                   annot=True, 
+                   fmt='.3f', 
+                   cmap='RdYlBu_r', 
+                   vmin=0.5, 
+                   vmax=1.0,
+                   cbar_kws={'label': 'AUC'},
+                   ax=ax)
+        
+        ax.set_title(f'{model_name} Cross-Domain Performance', fontsize=14, fontweight='bold')
+        ax.set_xlabel('Testing Domain', fontsize=12)
+        ax.set_ylabel('Training Domain', fontsize=12)
+        ax.set_xticklabels(domains, rotation=45, ha='right')
+        ax.set_yticklabels(domains, rotation=0)
+    
+    plt.tight_layout()
+    plt.savefig('confusion_matrices.pdf', dpi=300, bbox_inches='tight')
+    print("Confusion matrices saved to confusion_matrices.pdf")
+    
+    return fig
+
 def create_cross_domain_visualization(results):
     """Create visualization for cross-domain results"""
     import matplotlib.pyplot as plt
@@ -294,12 +391,18 @@ def main():
     """Main function"""
     print("Starting cross-domain performance testing...")
     
+    # Load training results from all domain experiments
+    print("Loading training results from domain experiments...")
+    training_results = load_training_results()
+    
     # Run cross-domain testing
     results = test_cross_domain_performance()
     
-    # Create visualization
+    # Create visualizations
     if results:
+        print("Creating visualizations...")
         create_cross_domain_visualization(results)
+        create_confusion_matrices(results, training_results)
     
     print("\nCross-domain testing completed!")
 
