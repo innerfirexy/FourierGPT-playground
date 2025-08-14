@@ -269,7 +269,7 @@ def create_confusion_matrices(results, training_results):
     
     domains = ['harmful', 'writing', 'xsum', 'peerread', 'pubmed']
     model_versions = ['3-opus-20240229', '3-haiku-20240307', '3-5-haiku-20241022']
-    model_names = ['3-Opus', '3-Haiku', '3.5-Haiku']
+    model_names = ['Claude-3-Opus', 'Claude-3-Haiku', 'Claude-3.5-Haiku']
     
     # Create figure with 3 subplots (one for each model version)
     fig, axes = plt.subplots(1, 3, figsize=(20, 6))
@@ -315,7 +315,7 @@ def create_confusion_matrices(results, training_results):
                    cbar_kws={'label': 'AUC'},
                    ax=ax)
         
-        ax.set_title(f'{model_name} Cross-Domain Performance', fontsize=14, fontweight='bold')
+        ax.set_title(f'{model_name}', fontsize=14, fontweight='bold')
         ax.set_xlabel('Testing Domain', fontsize=12)
         ax.set_ylabel('Training Domain', fontsize=12)
         ax.set_xticklabels(domains, rotation=45, ha='right')
