@@ -172,8 +172,25 @@ class CrossDomainEvaluator:
             print()
     
     def plot_confusion_matrices(self, save_path: str):
-        """Plot confusion matrices for all three models."""
-        fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+        """Plot confusion matrices for all models."""
+        n_models = len(self.model_names)
+        
+        # Calculate subplot layout
+        if n_models <= 3:
+            fig, axes = plt.subplots(1, n_models, figsize=(6*n_models, 6))
+        elif n_models <= 6:
+            fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+            axes = axes.flatten()
+        else:
+            # For more than 6 models, use a larger grid
+            cols = min(4, n_models)
+            rows = (n_models + cols - 1) // cols
+            fig, axes = plt.subplots(rows, cols, figsize=(6*cols, 6*rows))
+            axes = axes.flatten()
+        
+        # Ensure axes is always a list
+        if n_models == 1:
+            axes = [axes]
         
         for idx, model_name in enumerate(self.model_names):
             matrix = self.results[model_name]['cross_domain_matrix']
@@ -196,6 +213,10 @@ class CrossDomainEvaluator:
             axes[idx].set_xlabel('Test Domain')
             axes[idx].set_ylabel('Train Domain')
             axes[idx].tick_params(axis='both', which='major', labelsize=10)
+        
+        # Hide unused subplots
+        for idx in range(n_models, len(axes)):
+            axes[idx].set_visible(False)
         
         plt.tight_layout()
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
@@ -263,7 +284,7 @@ def exp_claude_haiku():
     evaluator.plot_confusion_matrices("claude-haiku_confusion_matrices.pdf")
     
     # Save results
-    evaluator.save_results("claude-haiku_cross_domain_results.pkl")
+    # evaluator.save_results("claude-haiku_cross_domain_results.pkl")
     
     print("\nClaude-Haiku cross-domain evaluation completed!")
     
@@ -295,9 +316,37 @@ def exp_claude_sonnet():
     evaluator.plot_confusion_matrices("claude-sonnet_confusion_matrices.pdf")
     
     # Save results
-    evaluator.save_results("claude-sonnet_cross_domain_results.pkl")
+    # evaluator.save_results("claude-sonnet_cross_domain_results.pkl")
     
     print("\nClaude-Sonnet cross-domain evaluation completed!")
+    
+    return evaluator
+
+
+def exp_gpt4():
+    """Run GPT-4 cross-domain evaluation experiment."""
+    # GPT-4 specific configuration
+    data_dir = "../data/GPT4"
+    domains = ["pubmed", "peerread", "harmful", "xsum", "writing"]
+    models = ["gpt-4", "gpt-4-1106-preview", "gpt-4-0125-preview", "gpt-4-turbo-2024-04-09"]
+    model_names = ["GPT-4 20230613", "GPT-4 20231106", "GPT-4 20240125", "GPT-4-Turbo 20240409"]
+    
+    # Initialize evaluator
+    evaluator = CrossDomainEvaluator(data_dir, domains, models, model_names)
+    
+    # Run the evaluation
+    evaluator.run_cross_domain_evaluation()
+
+    # Print overall summary
+    evaluator.print_overall_summary()
+    
+    # Plot confusion matrices
+    evaluator.plot_confusion_matrices("gpt4_confusion_matrices.pdf")
+    
+    # Save results
+    # evaluator.save_results("gpt4_cross_domain_results.pkl")
+    
+    print("\nGPT-4 cross-domain evaluation completed!")
     
     return evaluator
 
@@ -305,10 +354,13 @@ def exp_claude_sonnet():
 def main():
     """Main function to run the cross-domain evaluation."""
     # Run Claude-Haiku experiment
-    evaluator = exp_claude_haiku()
+    # evaluator = exp_claude_haiku()
 
     # Run Claude-Sonnet experiment
-    evaluator = exp_claude_sonnet()
+    # evaluator = exp_claude_sonnet()
+
+    # Run GPT-4 experiment
+    evaluator = exp_gpt4()
 
 if __name__ == "__main__":
     main()

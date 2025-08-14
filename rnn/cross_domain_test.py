@@ -538,11 +538,11 @@ def main():
     
     # Run Claude-Haiku experiment
     print("\nRunning Claude-Haiku cross-domain evaluation...")
-    evaluator_haiku = exp_claude_haiku()
+    # evaluator_haiku = exp_claude_haiku()
     
     # Run Claude-Sonnet experiment
     print("\nRunning Claude-Sonnet cross-domain evaluation...")
-    # evaluator_sonnet = exp_claude_sonnet()
+    evaluator_sonnet = exp_claude_sonnet()
     
     # Run GPT-4 experiment
     print("\nRunning GPT-4 cross-domain evaluation...")
