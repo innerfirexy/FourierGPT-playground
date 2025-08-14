@@ -531,6 +531,53 @@ def exp_claude_sonnet():
     return evaluator
 
 
+def exp_gpt4o():
+    """Run GPT-4o cross-domain evaluation experiment"""
+    # GPT-4o specific configuration
+    domains = ["harmful", "writing", "xsum", "peerread", "pubmed"]
+    model_configs = [
+        {
+            'name': "GPT-4o (2024-05-13)",
+            'id': "gpt-4o-2024-05-13",
+            'data_dir': "../data/GPT4o"
+        },
+        {
+            'name': "GPT-4o (2024-08-06)",
+            'id': "gpt-4o-2024-08-06",
+            'data_dir': "../data/GPT4o"
+        },
+        {
+            'name': "GPT-4o (2024-11-20)",
+            'id': "gpt-4o-2024-11-20",
+            'data_dir': "../data/GPT4o"
+        },
+        {
+            'name': "ChatGPT-4o-Latest",
+            'id': "chatgpt-4o-latest",
+            'data_dir': "../data/GPT4o"
+        }
+    ]
+    
+    # Initialize evaluator
+    evaluator = CrossDomainEvaluator(model_configs, domains)
+    
+    # Run the evaluation
+    evaluator.run_cross_domain_evaluation()
+    
+    # Print overall summary
+    evaluator.print_overall_summary()
+    
+    # Plot confusion matrices
+    evaluator.plot_confusion_matrices("gpt4o_cross_domain_matrices.pdf")
+    
+    # Save results
+    # evaluator.save_results("gpt4o_cross_domain_results.json")
+    
+    print("\nGPT-4o cross-domain evaluation completed!")
+    
+    return evaluator
+
+
 def main():
     """Main function to run the cross-domain evaluation"""
     print("Starting cross-domain evaluation for all experiments...")
@@ -546,7 +593,11 @@ def main():
     
     # Run GPT-4 experiment
     print("\nRunning GPT-4 cross-domain evaluation...")
-    evaluator_gpt4 = exp_gpt4()
+    # evaluator_gpt4 = exp_gpt4()
+    
+    # Run GPT-4o experiment
+    print("\nRunning GPT-4o cross-domain evaluation...")
+    evaluator_gpt4o = exp_gpt4o()
     
     print("\nAll cross-domain evaluations completed!")
 
