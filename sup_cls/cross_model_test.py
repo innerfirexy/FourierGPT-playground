@@ -23,22 +23,42 @@ from train_sup_cls import train_classifier, get_features, get_circular_mean
 
 
 class CrossModelEvaluator:
-    def __init__(self, data_dir: str, domains: List[str], models: List[str], model_names: List[str]):
-        self.data_dir = data_dir
+    def __init__(self, model_configs: List[Dict], domains: List[str]):
+        """
+        Initialize CrossModelEvaluator with multiple model configurations.
+        
+        Args:
+            model_configs: List of dictionaries, each containing:
+                - 'name': Model name for display
+                - 'id': Model identifier
+                - 'data_dir': Directory containing the model's data
+            domains: List of domain names
+        """
+        self.model_configs = model_configs
         self.domains = domains
-        self.models = models
-        self.model_names = model_names
+        self.models = [config['id'] for config in model_configs]
+        self.model_names = [config['name'] for config in model_configs]
         
         # Results storage
         self.results = {}
         
-    def get_data_paths(self, domain: str, model: str) -> Tuple[str, str]:
+    def get_data_paths(self, domain: str, model_id: str) -> Tuple[str, str]:
         """Get human and model data file paths for a given domain and model."""
-        human_file = f"{domain}_{model}_human.txt"
-        model_file = f"{domain}_{model}_model.txt"
+        # Find the model configuration
+        model_config = None
+        for config in self.model_configs:
+            if config['id'] == model_id:
+                model_config = config
+                break
         
-        human_path = os.path.join(self.data_dir, human_file)
-        model_path = os.path.join(self.data_dir, model_file)
+        if model_config is None:
+            raise ValueError(f"Model {model_id} not found in configurations")
+        
+        human_file = f"{domain}_{model_id}_human.txt"
+        model_file = f"{domain}_{model_id}_model.txt"
+        
+        human_path = os.path.join(model_config['data_dir'], human_file)
+        model_path = os.path.join(model_config['data_dir'], model_file)
         
         if not os.path.exists(human_path):
             raise FileNotFoundError(f"Human data file not found: {human_path}")
@@ -215,7 +235,7 @@ class CrossModelEvaluator:
         plt.tight_layout()
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"\nConfusion matrices saved to: {save_path}")
-        plt.show()
+        # plt.show()
     
     def save_results(self, save_path: str):
         """Save all results to a pickle file."""
@@ -257,17 +277,27 @@ class CrossModelEvaluator:
 def exp_claude_haiku():
     """Run Claude-Haiku cross-model evaluation experiment."""
     # Claude-Haiku specific configuration
-    data_dir = "../data/Claude/Claude-Haiku"
     domains = ["pubmed", "peerread", "harmful", "xsum", "writing"]
-    models = [
-        "claude-3-opus-20240229",
-        "claude-3-haiku-20240307", 
-        "claude-3-5-haiku-20241022"
+    model_configs = [
+        {
+            'name': "Claude-3-Opus",
+            'id': "claude-3-opus-20240229",
+            'data_dir': "../data/Claude/Claude-Haiku"
+        },
+        {
+            'name': "Claude-3-Haiku",
+            'id': "claude-3-haiku-20240307",
+            'data_dir': "../data/Claude/Claude-Haiku"
+        },
+        {
+            'name': "Claude-3.5-Haiku",
+            'id': "claude-3-5-haiku-20241022",
+            'data_dir': "../data/Claude/Claude-Haiku"
+        }
     ]
-    model_names = ["Claude-3-Opus", "Claude-3-Haiku", "Claude-3.5-Haiku"]
     
     # Initialize evaluator
-    evaluator = CrossModelEvaluator(data_dir, domains, models, model_names)
+    evaluator = CrossModelEvaluator(model_configs, domains)
     
     # Run the evaluation
     evaluator.run_cross_model_evaluation()
@@ -289,17 +319,27 @@ def exp_claude_haiku():
 def exp_claude_sonnet():
     """Run Claude-Sonnet cross-model evaluation experiment."""
     # Claude-Sonnet specific configuration
-    data_dir = "../data/Claude/Claude-Sonnet"
     domains = ["pubmed", "peerread", "harmful", "xsum", "writing"]
-    models = [
-        "claude-3-sonnet-20240229",
-        "claude-3-5-sonnet-20240620",
-        "claude-3-5-sonnet-20241022"
+    model_configs = [
+        {
+            'name': "Claude-3-Sonnet",
+            'id': "claude-3-sonnet-20240229",
+            'data_dir': "../data/Claude/Claude-Sonnet"
+        },
+        {
+            'name': "Claude-3.5-Sonnet (2024-06-20)",
+            'id': "claude-3-5-sonnet-20240620",
+            'data_dir': "../data/Claude/Claude-Sonnet"
+        },
+        {
+            'name': "Claude-3.5-Sonnet (2024-10-22)",
+            'id': "claude-3-5-sonnet-20241022",
+            'data_dir': "../data/Claude/Claude-Sonnet"
+        }
     ]
-    model_names = ["Claude-3-Sonnet", "Claude-3.5-Sonnet (2024-06-20)", "Claude-3.5-Sonnet (2024-10-22)"]
     
     # Initialize evaluator
-    evaluator = CrossModelEvaluator(data_dir, domains, models, model_names)
+    evaluator = CrossModelEvaluator(model_configs, domains)
     
     # Run the evaluation
     evaluator.run_cross_model_evaluation()
@@ -319,16 +359,62 @@ def exp_claude_sonnet():
 
 
 def exp_claude_sonnet_gpt4():
-    pass
+    """Run cross-model evaluation between Claude-3.5-Sonnet, ChatGPT-4o, and GPT-4-Turbo."""
+    # Cross-model configuration
+    domains = ["pubmed", "peerread", "harmful", "xsum", "writing"]
+    model_configs = [
+        {
+            'name': "Claude-3.5-Sonnet (2024-10-22)",
+            'id': "claude-3-5-sonnet-20241022",
+            'data_dir': "../data/Claude/Claude-Sonnet"
+        },
+        {
+            'name': "ChatGPT-4o-Latest",
+            'id': "chatgpt-4o-latest",
+            'data_dir': "../data/GPT4o"
+        },
+        {
+            'name': "GPT-4-Turbo (2024-04-09)",
+            'id': "gpt-4-turbo-2024-04-09",
+            'data_dir': "../data/GPT4"
+        }
+    ]
+    
+    # Initialize evaluator
+    evaluator = CrossModelEvaluator(model_configs, domains)
+    
+    # Run the evaluation
+    evaluator.run_cross_model_evaluation()
+    
+    # Print overall summary
+    evaluator.print_overall_summary()
+    
+    # Plot confusion matrices
+    evaluator.plot_confusion_matrices("claude_sonnet_gpt4_gpt4o_cross_model_matrices.pdf")
+    
+    # Save results
+    # evaluator.save_results("claude_sonnet_gpt4_cross_model_results.pkl")
+    
+    print("\nClaude-Sonnet vs GPT-4 cross-model evaluation completed!")
+    
+    return evaluator
 
 
 def main():
     """Main function to run the cross-model evaluation."""
     # Run Claude-Haiku experiment
-    evaluator_haiku = exp_claude_haiku()
+    # print("Running Claude-Haiku cross-model evaluation...")
+    # evaluator_haiku = exp_claude_haiku()
+    
     
     # Run Claude-Sonnet experiment
-    evaluator_sonnet = exp_claude_sonnet()
+    # print("Running Claude-Sonnet cross-model evaluation...")
+    # evaluator_sonnet = exp_claude_sonnet()
+    
+    
+    # Run cross-model experiment between Claude-Sonnet and GPT-4
+    print("Running Claude-Sonnet vs GPT-4 cross-model evaluation...")
+    evaluator_cross = exp_claude_sonnet_gpt4()
 
 
 if __name__ == "__main__":
