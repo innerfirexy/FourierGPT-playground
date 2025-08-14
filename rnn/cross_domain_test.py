@@ -103,9 +103,8 @@ def evaluate_model(model, test_loader, device='cpu'):
         'probabilities': [float(p) for p in all_probabilities]
     }
 
-def get_domain_data_paths(domain, model_version):
+def get_domain_data_paths(domain, model_version, data_dir="../data/Claude/Claude-Haiku"):
     """Get data file paths for a specific domain and model version"""
-    base_path = "../data/Claude/Claude-Haiku"
     
     # Map domain names to file patterns
     domain_patterns = {
@@ -120,8 +119,16 @@ def get_domain_data_paths(domain, model_version):
         raise ValueError(f"Unknown domain: {domain}")
     
     pattern = domain_patterns[domain]
-    human_file = f"{base_path}/{pattern}_claude-{model_version}_human.txt"
-    model_file = f"{base_path}/{pattern}_claude-{model_version}_model.txt"
+    
+    # Handle different model version formats
+    if model_version.startswith('claude-'):
+        # Claude models: pattern_claude-version_human.txt
+        human_file = f"{data_dir}/{pattern}_{model_version}_human.txt"
+        model_file = f"{data_dir}/{pattern}_{model_version}_model.txt"
+    else:
+        # GPT models: pattern_version_human.txt
+        human_file = f"{data_dir}/{pattern}_{model_version}_human.txt"
+        model_file = f"{data_dir}/{pattern}_{model_version}_model.txt"
     
     return human_file, model_file
 
@@ -178,8 +185,15 @@ def test_cross_domain_performance():
             print(f"  Testing on {test_domain} domain...")
             
             try:
-                # Get data paths
-                human_file, model_file = get_domain_data_paths(test_domain, model_version)
+                # Get data paths - determine data directory based on model version
+                if model_version.startswith('claude-'):
+                    data_dir = "../data/Claude/Claude-Haiku"
+                elif model_version.startswith('gpt-4') or model_version.startswith('chatgpt-4o'):
+                    data_dir = "../data/GPT4o"
+                else:
+                    data_dir = "../data/Claude/Claude-Haiku"  # default
+                
+                human_file, model_file = get_domain_data_paths(test_domain, model_version, data_dir)
                 
                 if not os.path.exists(human_file) or not os.path.exists(model_file):
                     print(f"    Warning: Data files not found for {test_domain}")

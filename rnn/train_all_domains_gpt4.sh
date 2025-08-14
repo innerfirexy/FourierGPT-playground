@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# Script to train RNN classifiers for all domains (writing, xsum, peerread, pubmed)
-# Bash version of train_all_domains.py
+# Script to train RNN classifiers for all domains (writing, xsum, peerread, pubmed, harmful)
+# GPT4 version
 
 set -e  # Exit on any error
 
 # Configuration
 DOMAINS=("writing" "xsum" "peerread" "pubmed" "harmful")
-# MODEL_VERSIONS=("claude-3-opus-20240229" "claude-3-haiku-20240307" "claude-3-5-haiku-20241022")
-# MODEL_VERSIONS=("claude-3-sonnet-20240229" "claude-3-5-sonnet-20240620" "claude-3-5-sonnet-20241022")
-MODEL_VERSIONS=("gpt-4-turbo-2024-04-09" "chatgpt-4o-latest")
+MODEL_VERSIONS=("gpt-4" "gpt-4-0125-preview" "gpt-4-1106-preview" "gpt-4-turbo-2024-04-09")
+
+# Data directory
+DATA_DIR="../data/GPT4"
 
 # Training parameters
 HIDDEN_SIZE=64
@@ -45,13 +46,18 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-
+# Function to generate short version for output directory
+get_short_version() {
+    local full_version=$1
+    echo "$full_version" | sed 's/gpt-4o-//' | sed 's/chatgpt-4o-//' | sed 's/-/_/g' | sed 's/\.//g'
+}
 
 # Function to train a single domain
 train_single_domain() {
     local domain=$1
     local model_version=$2
-    local output_dir="outputs/domain_experiments/${domain}_${model_version}"
+    local short_version=$(get_short_version "$model_version")
+    local output_dir="outputs/domain_experiments/${domain}_${short_version}"
     
     print_info "Training $domain domain - $model_version"
     echo "============================================================"
@@ -66,6 +72,7 @@ train_single_domain() {
         --model_version "$model_version"
         --file_model_version "$model_version"
         --output_dir "$output_dir"
+        --data_dir "$DATA_DIR"
         --hidden_size "$HIDDEN_SIZE"
         --num_layers "$NUM_LAYERS"
         --dropout "$DROPOUT"
@@ -93,7 +100,8 @@ train_single_domain() {
 is_training_completed() {
     local domain=$1
     local model_version=$2
-    local output_dir="outputs/domain_experiments/${domain}_${model_version}"
+    local short_version=$(get_short_version "$model_version")
+    local output_dir="outputs/domain_experiments/${domain}_${short_version}"
     
     # Check if cv_results.json exists
     if [[ -f "$output_dir/cv_results.json" ]]; then
@@ -105,7 +113,7 @@ is_training_completed() {
 
 # Main function
 main() {
-    print_info "Starting training for all domains..."
+    print_info "Starting training for all domains (GPT4)..."
     print_info "Start time: $(date '+%Y-%m-%d %H:%M:%S')"
     
     # Calculate total configurations
@@ -178,32 +186,16 @@ main() {
     print_info "End time: $(date '+%Y-%m-%d %H:%M:%S')"
     
     # Save results summary
-    summary_file="all_domains_training_summary.json"
+    summary_file="all_domains_gpt4_training_summary.json"
     cat > "$summary_file" << EOF
 {
-  "timestamp": "$(date -Iseconds)",
-  "total_configs": $total_configs,
-  "successful": $successful,
-  "failed": $failed,
-  "skipped": $skipped,
-  "successful_configs": [
-EOF
-    
-    for config in "${successful_configs[@]}"; do
-        echo "    \"$config\"," >> "$summary_file"
-    done
-    
-    cat >> "$summary_file" << EOF
-  ],
-  "failed_configs": [
-EOF
-    
-    for config in "${failed_configs[@]}"; do
-        echo "    \"$config\"," >> "$summary_file"
-    done
-    
-    cat >> "$summary_file" << EOF
-  ]
+    "timestamp": "$(date -Iseconds)",
+    "total_configs": $total_configs,
+    "successful": $successful,
+    "failed": $failed,
+    "skipped": $skipped,
+    "successful_configs": [$(printf '"%s"' "${successful_configs[@]}" | tr '\n' ',' | sed 's/,$//')],
+    "failed_configs": [$(printf '"%s"' "${failed_configs[@]}" | tr '\n' ',' | sed 's/,$//')]
 }
 EOF
     
@@ -224,3 +216,4 @@ fi
 
 # Run main function
 main "$@"
+

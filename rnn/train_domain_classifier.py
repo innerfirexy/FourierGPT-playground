@@ -335,6 +335,8 @@ def main():
                        help='文件名中的模型版本 (如: claude-3-haiku-20240307)')
     parser.add_argument('--output_dir', type=str, required=True,
                        help='输出目录')
+    parser.add_argument('--data_dir', type=str, default="../data/Claude/Claude-Haiku",
+                       help='数据目录路径')
     
     # 模型参数
     parser.add_argument('--hidden_size', type=int, default=64,
@@ -367,7 +369,7 @@ def main():
     args = parser.parse_args()
     
     # 构建数据文件路径
-    data_dir = "../data/Claude/Claude-Haiku"
+    data_dir = args.data_dir
     human_file = os.path.join(data_dir, f"{args.domain}_{args.file_model_version}_human.txt")
     model_file = os.path.join(data_dir, f"{args.domain}_{args.file_model_version}_model.txt")
     
