@@ -7,12 +7,13 @@ set -e  # Exit on any error
 
 # Configuration
 DOMAINS=("writing" "xsum" "peerread" "pubmed" "harmful")
+# Claude-Haiku
+# DATA_DIR="../data/Claude/Claude-Haiku"
 # MODEL_VERSIONS=("claude-3-opus-20240229" "claude-3-haiku-20240307" "claude-3-5-haiku-20241022")
-# MODEL_VERSIONS=("claude-3-sonnet-20240229" "claude-3-5-sonnet-20240620" "claude-3-5-sonnet-20241022")
-MODEL_VERSIONS=("gpt-4o-2024-05-13" "chatgpt-4o-latest")
+# Claude-Sonnet
+DATA_DIR="../data/Claude/Claude-Sonnet"
+MODEL_VERSIONS=("claude-3-sonnet-20240229" "claude-3-5-sonnet-20240620" "claude-3-5-sonnet-20241022")
 
-# Data directory
-DATA_DIR="../data/GPT4o"
 
 # Training parameters
 HIDDEN_SIZE=64
