@@ -453,13 +453,13 @@ def exp_gpt4():
             'data_dir': "../data/GPT4"
         },
         {
-            'name': "GPT-4-0125-Preview",
-            'id': "gpt-4-0125-preview",
+            'name': "GPT-4-1106-Preview",
+            'id': "gpt-4-1106-preview",
             'data_dir': "../data/GPT4"
         },
         {
-            'name': "GPT-4-1106-Preview",
-            'id': "gpt-4-1106-preview",
+            'name': "GPT-4-0125-Preview",
+            'id': "gpt-4-0125-preview",
             'data_dir': "../data/GPT4"
         },
         {
@@ -542,11 +542,11 @@ def main():
     
     # Run Claude-Sonnet experiment
     print("\nRunning Claude-Sonnet cross-domain evaluation...")
-    evaluator_sonnet = exp_claude_sonnet()
+    # evaluator_sonnet = exp_claude_sonnet()
     
     # Run GPT-4 experiment
     print("\nRunning GPT-4 cross-domain evaluation...")
-    # evaluator_gpt4 = exp_gpt4()
+    evaluator_gpt4 = exp_gpt4()
     
     print("\nAll cross-domain evaluations completed!")
 

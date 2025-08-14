@@ -46,18 +46,12 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Function to generate short version for output directory
-get_short_version() {
-    local full_version=$1
-    echo "$full_version" | sed 's/gpt-4o-//' | sed 's/chatgpt-4o-//' | sed 's/-/_/g' | sed 's/\.//g'
-}
 
 # Function to train a single domain
 train_single_domain() {
     local domain=$1
     local model_version=$2
-    local short_version=$(get_short_version "$model_version")
-    local output_dir="outputs/domain_experiments/${domain}_${short_version}"
+    local output_dir="outputs/domain_experiments/${domain}_${model_version}"
     
     print_info "Training $domain domain - $model_version"
     echo "============================================================"
@@ -100,8 +94,7 @@ train_single_domain() {
 is_training_completed() {
     local domain=$1
     local model_version=$2
-    local short_version=$(get_short_version "$model_version")
-    local output_dir="outputs/domain_experiments/${domain}_${short_version}"
+    local output_dir="outputs/domain_experiments/${domain}_${model_version}"
     
     # Check if cv_results.json exists
     if [[ -f "$output_dir/cv_results.json" ]]; then
