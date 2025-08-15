@@ -109,6 +109,63 @@ class BiLSTMClassifier(nn.Module):
         
         return output
     
+    def extract_last_hidden(self, x, lengths=None):
+        """
+        提取最后一层的隐藏状态（若为双向则拼接前后向）
+        
+        Args:
+            x: 输入序列 [batch_size, seq_len, input_size]
+            lengths: 序列长度 [batch_size]
+        Returns:
+            last_hidden: [batch_size, hidden_size * num_directions]
+        """
+        # 如果输入是1D，扩展为2D [batch_size, seq_len] -> [batch_size, seq_len, 1]
+        if x.dim() == 2:
+            x = x.unsqueeze(-1)
+        
+        if lengths is not None:
+            sorted_lengths, sorted_indices = torch.sort(lengths, descending=True)
+            _, original_indices = torch.sort(sorted_indices)
+            x = x[sorted_indices]
+            packed_x = nn.utils.rnn.pack_padded_sequence(
+                x, sorted_lengths.cpu(), batch_first=True
+            )
+        else:
+            packed_x = x
+        
+        _, (hidden, _) = self.lstm(packed_x)
+        
+        if self.bidirectional:
+            forward_hidden = hidden[-2]
+            backward_hidden = hidden[-1]
+            last_hidden = torch.cat([forward_hidden, backward_hidden], dim=1)
+        else:
+            last_hidden = hidden[-1]
+        
+        if lengths is not None:
+            last_hidden = last_hidden[original_indices]
+        
+        return last_hidden
+    
+    def extract_second_linear(self, x, lengths=None):
+        """
+        提取分类器最后一层线性层的输入表示（即倒数第二个组件的输出），
+        形状为 [batch_size, hidden_size // 2]
+        """
+        last_hidden = self.extract_last_hidden(x, lengths)
+        # 通过除最后一层线性层之外的所有层
+        features = self.classifier[:-1](last_hidden)
+        return features
+    
+    def extract_first_linear(self, x, lengths=None):
+        """
+        Extract the output of the first linear layer in self.classifier
+        shape: [batch_size, hidden_size]
+        """
+        last_hidden = self.extract_last_hidden(x, lengths)
+        features = self.classifier[0](last_hidden)
+        return features
+
     def get_attention_weights(self, x, lengths=None):
         """
         获取注意力权重（用于可视化）
@@ -137,7 +194,7 @@ class BiLSTMClassifier(nn.Module):
         else:
             packed_x = x
         
-        lstm_out, _ = self.lstm(packed_x)
+        lstm_out, (hidden, _) = self.lstm(packed_x)
         
         if lengths is not None:
             lstm_out, _ = nn.utils.rnn.pad_packed_sequence(
